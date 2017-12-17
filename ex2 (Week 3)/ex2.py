@@ -86,33 +86,23 @@ def costFunctionElement(X, Y, theta):
     
 print(costFunctionElement( X, Y, theta))
 
-# theta from normal equation
-
-theta_normal = np.dot( np.dot(np.linalg.inv(np.dot(X.T,X)), X.T), Y);
-
-print(theta_normal)
-
-'''
 alpha = 0.01
-Iterations = 500
+Iterations = 400
 
 Cost_History = []
 Theta_History = []
 
 def gradient(X,Y,Theta,Iterations,alpha):
     for i in range(Iterations):
-        Loss = Y - sigmoid(np.dot(X, theta.T))
+        Loss = sigmoid(np.dot(X, theta.T)) - Y
         Cost = costFunctionMatrix(X,Y,Theta)
-        Loss = Loss*(-1)
-        dJ = (np.dot(X.T,Loss))/len(Y)#Calculating Partial differentiation of Cost function
+        dJ = (np.dot(X.T,Loss))/len(Y) #Calculating Partial differentiation of Cost function
         Cost_History.append(Cost)
         Theta_History.append(Theta)
 
         Theta = Theta - (alpha*dJ) #New Theta
     return Theta
 
-theta_iterated = gradient(X,Y,theta,Iterations,alpha)
+theta = gradient(X,Y,theta,Iterations,alpha)
 
-print(theta_iterated)
-
-'''
+print(theta)
