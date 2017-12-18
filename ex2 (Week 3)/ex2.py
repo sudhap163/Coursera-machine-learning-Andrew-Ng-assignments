@@ -37,6 +37,28 @@ plt.xlabel('Exam 1 score')
 plt.ylabel('Exam 2 score')
 plt.show()
 
+# adding bias column to features
+
+bias = pd.Series(1,index=range(len(Y))) 
+data["Bias"] = bias
+'''
+Next four lines is to bring bias column to the first since bias column is X0 and previously it is added to the end of the dataframe
+'''
+Header_X_Bias = list(data.columns.values)
+Header_X_Bias = Header_X_Bias[:-1]
+Header_X_Bias.insert(0,"Bias")
+data = data[Header_X_Bias]
+
+X = np.array(data)
+theta = np.array([0,0,0])
+
+'''
+Now X is (100,3)
+Y is (100,1)
+theta is (1,3)
+
+Now, X*theta.T = (100,1) 
+'''
 # sigmoid
 
 def sigmoid(z):
@@ -45,16 +67,6 @@ def sigmoid(z):
 print(sigmoid(0))
 
 # costFunction
-
-theta = np.array([0,0])
-
-'''
-Now X is (100,2)
-Y is (100,1)
-theta is (1,2)
-
-Now, X*theta.T = (100,1) 
-'''
 
 def costFunctionMatrix( X, Y, theta):
 
@@ -87,22 +99,24 @@ def costFunctionElement(X, Y, theta):
 print(costFunctionElement( X, Y, theta))
 
 alpha = 0.01
-Iterations = 400
+Iterations = 5000
 
 Cost_History = []
 Theta_History = []
 
 def gradient(X,Y,Theta,Iterations,alpha):
     for i in range(Iterations):
-        Loss = sigmoid(np.dot(X, theta.T)) - Y
+        Loss = sigmoid(np.dot(X, Theta.T)) - Y
         Cost = costFunctionMatrix(X,Y,Theta)
         dJ = (np.dot(X.T,Loss))/len(Y) #Calculating Partial differentiation of Cost function
         Cost_History.append(Cost)
         Theta_History.append(Theta)
-
+        
         Theta = Theta - (alpha*dJ) #New Theta
     return Theta
 
 theta = gradient(X,Y,theta,Iterations,alpha)
 
 print(theta)
+
+print(sigmoid(np.dot(np.array([1,45,85]).T,theta)))
