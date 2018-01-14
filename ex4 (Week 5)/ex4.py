@@ -75,4 +75,15 @@ cost = -cost/5000
 
 # regularised cost function
 
-cost_reg = cost + (0.1/(2*5000))
+theta1_sum = 0
+theta2_sum = 0
+
+for i in range(1, 25):
+    for j in range(1, 400):
+        theta1_sum += theta1[i][j]
+
+for i in range(1, 10):
+    for j in range(1, 25):
+        theta2_sum += theta2[i][j]
+
+cost_reg = cost + (1/(2*5000)) * (theta1_sum + theta2_sum) 
