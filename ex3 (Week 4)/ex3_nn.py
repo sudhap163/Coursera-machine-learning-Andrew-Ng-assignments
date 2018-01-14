@@ -16,11 +16,8 @@ X = data["X"]
 
 X = np.hstack((np.ones((5000,1)), X.reshape(5000,400)))
 
-theta1 = weights["Theta1"]
-theta2 = weights["Theta2"]
-
-theta1 = theta1.reshape(25, 401)
-theta2 = theta2.reshape(10, 26)
+theta1 = weights["Theta1"].reshape(25, 401)
+theta2 = weights["Theta2"].reshape(10, 26)
 
 # sigmoid function
 
