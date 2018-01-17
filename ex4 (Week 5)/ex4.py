@@ -86,4 +86,61 @@ for i in range(1, 10):
     for j in range(1, 25):
         theta2_sum += theta2[i][j]
 
-cost_reg = cost + (1/(2*5000)) * (theta1_sum + theta2_sum) 
+cost_reg = cost + (1/(2*5000)) * (theta1_sum + theta2_sum)
+
+# sigmoid gradient function
+
+def sigmoidGradient(z):
+    return (sigmoid(z)*(1 - sigmoid(z)))
+    
+# random initialization
+
+theta1 = np.random.uniform(low=-0.12, high=0.12, size=(26, 401))
+theta2 = np.random.uniform(low=-0.12, high=0.12, size=(10, 26))
+
+# backpropagation
+
+delta1 = np.zeros((26,401))
+delta2 = np.zeros((10, 26))
+
+ITR=500
+alpha=0.1
+for j in range(0,ITR):
+    for i in range(0, 5000):
+        a1 = X[i].reshape(401, 1)
+        z2 = np.dot(theta1, a1) #26,1
+        a2 = sigmoid(z2) #26,1
+        
+        #a2 = np.vstack((np.ones((1,1)), a2.reshape(25,1)))
+        z3 = np.dot(theta2, a2) #10,1
+        a3 = sigmoid(z3) #10,1
+        
+        error3 = a3 - Yk[i].reshape(10,1) #10,1
+        error2 = np.multiply(np.dot(theta2.T, error3), sigmoidGradient(z2)) #26,1
+        
+        delta1 += np.dot(error2, a1.T)
+        delta2 += np.dot(error3, a2.T)
+    delta1 /=5000.0
+    delta2 /=5000.0
+    
+    theta1 -= delta1*alpha
+    theta2 -= delta2*alpha
+    print(j)
+    
+# costfunction after finding thetas
+
+n1 = np.dot(X, theta1.T)                    # 5000x26
+a1 = sigmoid(n1)                            # 5000x26
+
+n2 = np.dot(a1, theta2.T)                   # 5000x10
+a2 = sigmoid(n2)
+
+newY = (np.argmax(a2, axis = 1) + 1).reshape(5000,1)
+
+error = Y - newY
+
+accuracy = ((5000 - np.nonzero(error)[0].shape[0])/5000)*100
+            
+print ('Accuracy: ', accuracy)
+    
+
