@@ -98,14 +98,21 @@ def sigmoidGradient(z):
 theta1 = np.random.uniform(low=-0.12, high=0.12, size=(26, 401))
 theta2 = np.random.uniform(low=-0.12, high=0.12, size=(10, 26))
 
+theta1_reg = np.random.uniform(low=-0.12, high=0.12, size=(26, 401))   # regularised thetas
+theta2_reg = np.random.uniform(low=-0.12, high=0.12, size=(10, 26))
+
 # backpropagation
 
 delta1 = np.zeros((26,401))
 delta2 = np.zeros((10, 26))
 
-ITR=500
-alpha=0.1
-for j in range(0,ITR):
+delta1_reg = np.zeros((26, 401))                                       # regularised deltas
+delta2_reg = np.zeros((10, 26))
+
+iterations = 1800
+alpha = 0.1
+
+for j in range(0, iterations):
     for i in range(0, 5000):
         a1 = X[i].reshape(401, 1)
         z2 = np.dot(theta1, a1) #26,1
@@ -125,6 +132,13 @@ for j in range(0,ITR):
     
     theta1 -= delta1*alpha
     theta2 -= delta2*alpha
+    
+    delta1_reg = delta1_reg/5000.0 + theta1_reg*(1.0/5000)             # regularised calculation
+    delta2_reg = delta2_reg/5000.0 + theta2_reg*(1.0/5000)
+    
+    theta1_reg -= delta1_reg*alpha
+    theta2_reg -= delta2_reg*alpha
+    
     print(j)
     
 # costfunction after finding thetas
@@ -142,5 +156,19 @@ error = Y - newY
 accuracy = ((5000 - np.nonzero(error)[0].shape[0])/5000)*100
             
 print ('Accuracy: ', accuracy)
-    
 
+# regularised cost function
+
+n1 = np.dot(X, theta1_reg.T)                    # 5000x26
+a1 = sigmoid(n1)                                # 5000x26
+
+n2 = np.dot(a1, theta2_reg.T)                   # 5000x10
+a2 = sigmoid(n2)
+
+newY = (np.argmax(a2, axis = 1) + 1).reshape(5000,1)
+
+error = Y - newY
+
+accuracy = ((5000 - np.nonzero(error)[0].shape[0])/5000)*100
+            
+print ('Accuracy (regularised): ', accuracy)
