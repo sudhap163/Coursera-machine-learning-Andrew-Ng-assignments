@@ -83,7 +83,6 @@ print(np.dot([1,3.5],Theta_Iterated), np.dot([1,7], Theta_Normal))
 Below is the code for plotting 3d graph
 '''
 
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter

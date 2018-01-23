@@ -6,6 +6,7 @@ Created on Sat Jan 20 18:16:34 2018
 """
 
 import scipy.io
+import numpy as np
 import matplotlib.pyplot as plt
 
 data = scipy.io.loadmat("ex5data1.mat")
@@ -29,4 +30,10 @@ plt.ylabel('Change in water level')
 plt.show()
 
 # Regularized linear regression cost function
+
+# adding x0
+    
+X = np.vstack((np.ones((1,1)), X.reshape(8,1)))
+
+# calculation
 
