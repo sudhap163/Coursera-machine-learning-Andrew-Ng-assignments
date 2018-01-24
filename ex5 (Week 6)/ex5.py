@@ -33,7 +33,16 @@ plt.show()
 
 # adding x0
     
-X = np.vstack((np.ones((1,1)), X.reshape(8,1)))
+X = np.hstack((np.ones((8,1)), X.reshape(8,1)))
 
 # calculation
+
+theta = np.array([1, 1])
+error = np.dot(X, theta.T).reshape(8,1) - Y
+
+cost = np.sum(np.dot(error.T, error))/(2*8) + (np.sum(np.dot(theta.T, theta)) - theta[0]*theta[0])*0.5/(2*8)
+
+# Regularized linear regression gradient
+
+grad = np.dot(X.T, np.dot(X, theta.T).reshape(8,1) - Y)/8 + (np.sum(theta) - theta[0])/8
 

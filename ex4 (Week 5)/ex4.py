@@ -109,7 +109,7 @@ delta2 = np.zeros((10, 26))
 delta1_reg = np.zeros((26, 401))                                       # regularised deltas
 delta2_reg = np.zeros((10, 26))
 
-iterations = 1800
+iterations = 200
 alpha = 0.1
 
 for j in range(0, iterations):
