@@ -45,4 +45,3 @@ cost = np.sum(np.dot(error.T, error))/(2*8) + (np.sum(np.dot(theta.T, theta)) - 
 # Regularized linear regression gradient
 
 grad = np.dot(X.T, np.dot(X, theta.T).reshape(8,1) - Y)/8 + (np.sum(theta) - theta[0])/8
-
