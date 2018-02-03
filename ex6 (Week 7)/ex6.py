@@ -7,6 +7,7 @@ Created on Tue Jan 30 18:49:14 2018
 
 import scipy.io
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn import svm
@@ -37,13 +38,8 @@ plt.show()
 
 # Gaussian kernel
 
-def gaussianKernel( X1, X2, sigma = 0.3 ):
-    #return np.exp(-np.sum( np.power(( X1 - X2), 2), axis = 1)/(2*sigma**2))
-    mat = np.zeros((len(X1), len(X2)))
-    for i in range(0,len(X1)):
-        for j in range(0,len(X2)):
-            mat[i][j] = np.exp(-np.sum( np.power(( X1[i] - X2[j]), 2))/(2*sigma**2))
-    return mat
+def gaussianKernel( U, V, sigma = 0.3 ):
+    return np.exp((-1/2*sigma*sigma)*(np.sum(np.power((U-V),2))))
 
 # k = gaussianKernel(np.array([1, 2, 1]), np.array([0, 4, -1]), 2)
 
@@ -77,33 +73,61 @@ plt.xlabel('X[:, 0]')
 plt.ylabel('X[:, 1]')
 plt.show()
 
+# finding gram matrix
+
+def gram(U,V,sigma=0.1):
+    G = np.zeros((U.shape[0], V.shape[0]))
+    for i in range(0,U.shape[0]):
+        for j in range(0,V.shape[0]):
+            G[i][j] = gaussianKernel(U[i],V[j],sigma)
+    return G
+
+C = s = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]
+
+ACC = []
+max_acc_value = 0
+max_acc_index = np.array([0, 0])
+
 '''
-# SVM classifier
-
-sigma = 0.3
-
-clf = svm.SVC(C = 1, kernel = 'precomputed')
-model = clf.fit( gaussianKernel(X, X, sigma), Y )
-p = model.predict( gaussianKernel(Xval, X) )
+for i in range(0,8):
+    a = []
+    for j in range(0,8):
+        clf = svm.SVC(C = C[i], kernel = "precomputed")
+        clf.fit(gram(X,X,s[j]),Y.reshape(len(Y),))
+        yTest = clf.predict(np.dot(Xval,X.T))
+        e = yTest - Yval.reshape(len(Yval))
+        acc = e.shape[0] - np.count_nonzero(e)
+        acc = (acc*100)/e.shape[0]
+        if (max_acc_value < acc):
+            max_acc_value = acc
+            max_acc_index = np.array([i,j]).reshape(1,1)
+        a.append(acc)
+        print (j, max_acc_value)
+    ACC.append(a)
+    
+print('Highest value of C : ', C[max_acc_index[0][0]], ' and sigma : ', s[max_acc_index[0][1]])
 '''
 
-# predict 
+# plt.plot(s,ACC[0],s,ACC[1],s,ACC[2],s,ACC[3],s,ACC[4],s,ACC[5],s,ACC[6],s,ACC[7])
 
-C = sigma = np.array([0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30])
-error = np.zeros((8, 8, 200))
+# Spam classifier
 
-for i in range(len(C)):
-    for j in range(len(sigma)):
-        clf = svm.SVC(C[i], kernel = 'precomputed')
-        model = clf.fit( gaussianKernel(X, X, sigma[j]), Y )
-        p = model.predict( gaussianKernel(Xval, X) )
-        error[i][j] = p.reshape(200,1) - Yval
+# loading files
 
-''' min = np.argmin(np.argmin(error, axis = 0), axis = 1) '''
+vocab = np.array(pd.read_csv('vocab.csv'))
+words = vocab[:, 1]
 
-min = error[0][0]
+spam_data = scipy.io.loadmat('spamTrain.mat')
+X = spam_data["X"]
+Y = spam_data["y"]
 
-for i in range(len(C)):
-    for j in range(len(sigma)):
-        if (error[i][j] != 0):
-            print()
+test_data = scipy.io.loadmat('spamTest.mat')
+Xtest = test_data["Xtest"]
+Ytest = test_data["ytest"]
+
+clf = svm.SVC()
+clf.fit(X, Y.reshape(len(Y),))
+
+acc_train = (X.shape[0] - np.count_nonzero( clf.predict(X).reshape(len(X), 1) - Y ))*100/len(X)
+
+acc_test = (Xtest.shape[0] - np.count_nonzero( clf.predict(Xtest).reshape(len(Xtest), 1) - Ytest ))*100/len(Xtest)
