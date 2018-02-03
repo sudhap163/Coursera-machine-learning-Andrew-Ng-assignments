@@ -88,7 +88,6 @@ ACC = []
 max_acc_value = 0
 max_acc_index = np.array([0, 0])
 
-'''
 for i in range(0,8):
     a = []
     for j in range(0,8):
@@ -106,7 +105,6 @@ for i in range(0,8):
     ACC.append(a)
     
 print('Highest value of C : ', C[max_acc_index[0][0]], ' and sigma : ', s[max_acc_index[0][1]])
-'''
 
 # plt.plot(s,ACC[0],s,ACC[1],s,ACC[2],s,ACC[3],s,ACC[4],s,ACC[5],s,ACC[6],s,ACC[7])
 
@@ -131,3 +129,6 @@ clf.fit(X, Y.reshape(len(Y),))
 acc_train = (X.shape[0] - np.count_nonzero( clf.predict(X).reshape(len(X), 1) - Y ))*100/len(X)
 
 acc_test = (Xtest.shape[0] - np.count_nonzero( clf.predict(Xtest).reshape(len(Xtest), 1) - Ytest ))*100/len(Xtest)
+
+print("Accuracy of training set : ", acc_train)
+print("Accuracy of test set : ", acc_test)
