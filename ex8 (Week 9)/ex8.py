@@ -28,16 +28,20 @@ plt.show()
 # calculating Gaussian parameters
 
 def estimateGaussian(X):
-    mu = (np.sum(X, axis = 1)/(len(X))).reshape(307,1)
-    sigma_square = (np.sum(np.power((X - mu), 2), axis = 1)/len(X)).reshape(307, 1)
+    mu = (np.sum(X, axis = 0)/(len(X))).reshape(1,2)
+    sigma_square = (np.sum(np.power((X - mu), 2), axis = 0)/len(X)).reshape(1, 2)
     return mu, sigma_square
 
 # calculating probablility
-
+mu, sigma_square = mu, sigma_square = estimateGaussian(X)
 def computeProbability(X):
-    mu, sigma_square = mu, sigma_square = estimateGaussian(X)
-    return (1/np.power((2*math.pi*sigma_square), 0.5)) * np.exp(-np.power((X - mu), 2)/(2 * sigma_square))
+    mu, sigma_square = estimateGaussian(X)
+    covariance = np.dot(X.T, X).reshape(2,2)
+    prob = np.array(np.exp( -0.5 * np.dot(np.dot((X[0].reshape(1,2) - mu), covariance), (X[0].reshape(1,2) - mu)))/(2*np.pi*sigma_square[0][0]*sigma_square[0][1]))
+    for i in range(1, 307):
+        np.append(prob, np.exp( -0.5 * np.dot(np.dot((X[i].reshape(1,2) - mu), covariance), (X[i].reshape(1,2) - mu)))/(2*np.pi*sigma_square[0][1]*sigma_square[0][1]))
+    return prob
 
 # selecting threshold
 
-probability = computeProbability(Xval)
+pval = computeProbability(Xval)
